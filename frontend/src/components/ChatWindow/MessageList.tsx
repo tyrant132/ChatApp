@@ -13,7 +13,7 @@ const MessageList: React.FC = () => {
     const { user } = useAuthStore();
     const containerRef = useRef<HTMLDivElement | null>(null);
     const {
-        data, 
+        data,
         isLoading,
         handleLoadMore,
         isFetchingNextPage,
@@ -54,21 +54,21 @@ const MessageList: React.FC = () => {
 
     if (isLoading) {
         return <div className="relative flex-1 h-full flex items-center justify-center">
-            <div className="size-10 bg-sky-100 rounded-full animate-pulse"></div>
+            <div className="size-10 bg-teal-soft rounded-full animate-pulse"></div>
         </div>
-    }    
+    }
 
-    return <div ref={containerRef} className="flex-1 bg-gray-50 overflow-y-auto p-4 pb-10">
+    return <div ref={containerRef} className="flex-1 bg-paper overflow-y-auto p-5 pb-10">
         {hasNextPage && <div className="flex justify-center mb-4">
             <button
                 type="button"
-                className="px-2 py-1 text-xs bg-gray-300 text-white rounded-lg
-                    hover:bg-gray-400 transition-colors cursor-pointer
+                className="px-3 py-1 text-xs bg-white border border-paper-line text-ink/60 rounded-full
+                    hover:bg-paper-dim transition-colors cursor-pointer
                 "
                 onClick={handleLoadMore}
                 disabled={isFetchingNextPage}
             >
-                {isFetchingNextPage ? 'Loading...' : 'Load More'}
+                {isFetchingNextPage ? 'Loading...' : 'Load earlier messages'}
             </button>
         </div>}
 

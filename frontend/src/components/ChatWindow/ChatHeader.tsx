@@ -5,21 +5,21 @@ import { useConversationStore } from "../../stores/conversationStore";
 const ChatHeader: React.FC = () => {
     const { selectedConversation, setSelectedConversation } = useConversationStore();
 
-    return <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+    return <div className="px-6 py-4 border-b border-paper-line bg-paper flex items-center justify-between">
         <div className="flex items-center space-x-3">
-            <img src="https://avatar.iran.liara.run/public" alt="User image" className="size-10 rounded-full object-cover"/>
+            <img src="https://avatar.iran.liara.run/public" alt="User image" className="size-10 rounded-full object-cover ring-1 ring-ink/10"/>
             <div>
-                <h2 className="font-semibold">{selectedConversation?.friend?.username}</h2>
-                <p className={`${selectedConversation?.friend.online ? 'text-sm text-green-500' : 'text-sm text-gray-500'}`}>
+                <h2 className="font-medium text-ink">{selectedConversation?.friend?.username}</h2>
+                <p className={`text-xs ${selectedConversation?.friend.online ? 'text-teal' : 'text-ink/40'}`}>
                     {selectedConversation?.friend.online ? 'Online' : 'Offline'}
                 </p>
             </div>
         </div>
-        <div className="flex space-x-4">
-            <button className="text-gray-500 hover:text-gray-700 cursor-pointer">
+        <div className="flex items-center space-x-2">
+            <button className="p-2 rounded-lg text-ink/40 hover:text-ink hover:bg-ink/5 cursor-pointer transition-colors">
                 <EllipsisVertical className="size-[16px]"/>
             </button>
-            <button onClick={() => setSelectedConversation(null)} className="sm:hidden text-gray-500 hover:text-gray-700 cursor-pointer">
+            <button onClick={() => setSelectedConversation(null)} className="sm:hidden p-2 rounded-lg text-ink/40 hover:text-ink hover:bg-ink/5 cursor-pointer transition-colors">
                 <X className="size-4"/>
             </button>
         </div>

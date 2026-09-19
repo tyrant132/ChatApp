@@ -44,50 +44,50 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitch }) => {
     const onSubmit = (data: LoginFormData) => mutation.mutate(data);
 
     return <>
-        <h2 className="text-2xl font-bold text-dark mb-2">Sign In to Your Account</h2>
-        <p className="text-gray-500 text-sm mb-8">Enter your credentials to continue</p>
+        <h2 className="font-display text-2xl text-ink mb-2">Sign in to your account</h2>
+        <p className="text-ink/45 text-sm mb-8">Enter your credentials to continue</p>
 
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
-                <label htmlFor="email" className="block text-gray-700 mb-2 text-sm">Email</label>
-                <div className="relative mb-2">
-                    <Mail className="absolute insset-y-0 left-3 size-5 text-gray-400 top-1/2 -translate-y-1/2"/>
-                    <input 
+                <label htmlFor="email" className="block text-ink/70 mb-2 text-sm">Email</label>
+                <div className="relative">
+                    <Mail className="absolute left-3 size-4 text-ink/35 top-1/2 -translate-y-1/2"/>
+                    <input
                         {...register('email')}
                         type="email"
-                        className="text-sm w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                        className="text-sm w-full pl-10 pr-3 py-3 bg-white border border-paper-line rounded-lg focus:outline-none focus:ring-2 focus:ring-teal/30 focus:border-teal text-ink"
                         placeholder="you@example.com"
                     />
                 </div>
-                {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+                {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
             </div>
 
             <div>
-                <label htmlFor="password" className="block text-gray-700 mb-2 text-sm">Password</label>
-                <div className="relative mb-2">
-                    <Lock className="absolute insset-y-0 left-3 size-5 text-gray-400 top-1/2 -translate-y-1/2"/>
-                    <input 
+                <label htmlFor="password" className="block text-ink/70 mb-2 text-sm">Password</label>
+                <div className="relative">
+                    <Lock className="absolute left-3 size-4 text-ink/35 top-1/2 -translate-y-1/2"/>
+                    <input
                         {...register('password')}
                         type="password"
-                        className="text-sm w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                        placeholder="******"
+                        className="text-sm w-full pl-10 pr-3 py-3 bg-white border border-paper-line rounded-lg focus:outline-none focus:ring-2 focus:ring-teal/30 focus:border-teal text-ink"
+                        placeholder="••••••"
                     />
                 </div>
-                {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+                {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
             </div>
 
             <button
                 type="submit"
                 disabled={mutation.isPending}
-                className="mt-4 w-full bg-sky-500 hover:bg-sky-600 disabled:opacity-70 disabled:cursor-not-allowed text-white font-medium py-3 px-4 rounded-lg transition duration-300 flex justify-center items-center"
+                className="mt-2 w-full bg-teal hover:bg-teal-dark disabled:opacity-60 disabled:cursor-not-allowed text-paper font-medium py-3 px-4 rounded-lg transition-colors flex justify-center items-center cursor-pointer"
             >
-                {mutation.isPending ? <Loader2 className="animate-spin size-5"/> : "Sign In"}
+                {mutation.isPending ? <Loader2 className="animate-spin size-5"/> : "Sign in"}
             </button>
         </form>
 
-        <div className="text-center text-sm mt-4">
-            <span className="text-gray-600">Don't have an account? </span>
-            <span onClick={onSwitch} className="text-primary font-medium cursor-pointer hover:underline">Sign Up</span>
+        <div className="text-center text-sm mt-5">
+            <span className="text-ink/55">Don't have an account? </span>
+            <span onClick={onSwitch} className="text-teal font-medium cursor-pointer hover:underline">Sign up</span>
         </div>
     </>
 }

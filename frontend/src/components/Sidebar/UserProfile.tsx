@@ -24,13 +24,13 @@ const UserProfile: React.FC = () => {
         return navigate('/auth');
     }
 
-    return <div className="p-4 border-t border-gray-200 flex items-center space-x-3">
-        <img src="https://avatar.iran.liara.run/public" alt="User" className="size-10 rounded-full object-cover" />
+    return <div className="px-5 py-4 border-t border-ink-line flex items-center space-x-3">
+        <img src="https://avatar.iran.liara.run/public" alt="User" className="size-10 rounded-full object-cover ring-1 ring-white/10" />
         <div className="flex-1 min-w-0">
-            <h2 className="font-semibold truncate text-sm">{user?.username} ({user?.connectCode})</h2>
-            <p className="text-xs text-gray-500">Online</p>
+            <h2 className="font-medium truncate text-sm text-paper">{user?.username} <span className="text-paper/35 font-normal">({user?.connectCode})</span></h2>
+            <p className="text-xs text-teal">Online</p>
         </div>
-        <button onClick={() => logoutUser()} className="text-gray-500 hover:text-gray-700 cursor-pointer">
+        <button onClick={() => logoutUser()} className="p-2 rounded-lg text-paper/45 hover:text-paper hover:bg-white/5 cursor-pointer transition-colors">
             <LogOut className="size-[16px]"/>
         </button>
     </div>

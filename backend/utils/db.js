@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 export const connectDB = async () => {
-    const uri = process.env.MONGO_URI;
+    const uri = "mongodb://localhost:27017";
     if (!uri) throw new Error("MONGO_URI is not set");
 
     try {

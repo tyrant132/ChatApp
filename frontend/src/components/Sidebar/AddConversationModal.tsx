@@ -68,22 +68,22 @@ const AddConversationModal: React.FC<AddConversationModalProps> = ({
         <Modal
             isOpen={isOpen}
             onClose={onClose}
-            title="Add Conversation"
+            title="Add conversation"
         >
             <form onSubmit={handleSubmit(onSubmit)}>
-                <label htmlFor="connectCode" className="block text-gray-700 mb-2 text-sm">Connect ID</label>
-                <div className="relative mb-2">
-                    <Wifi className="absolute inset-y-0 left-3 size-5 text-gray-400 top-1/2 -translate-y-1/2"/>
-                    <input 
+                <label htmlFor="connectCode" className="block text-ink/70 mb-2 text-sm">Connect ID</label>
+                <div className="relative">
+                    <Wifi className="absolute left-3 size-4 text-ink/35 top-1/2 -translate-y-1/2"/>
+                    <input
                         {...register('connectCode')}
-                        className="text-black text-sm w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                        className="text-ink text-sm w-full pl-10 pr-3 py-3 bg-white border border-paper-line rounded-lg focus:outline-none focus:ring-2 focus:ring-teal/30 focus:border-teal"
                     />
                 </div>
-                {errors.connectCode && <p className="text-red-500 text-sm">{errors.connectCode.message}</p>}
+                {errors.connectCode && <p className="text-red-500 text-sm mt-1">{errors.connectCode.message}</p>}
                 <button
                     type="submit"
                     disabled={isFetching}
-                    className="w-full flex justify-center items-center bg-sky-500 text-white py-2 rounded-lg hover:bg-blue-600 transition cursor-pointer mt-4"
+                    className="w-full flex justify-center items-center bg-teal text-paper py-3 rounded-lg hover:bg-teal-dark transition-colors cursor-pointer mt-4 disabled:opacity-60"
                 >
                     {isFetching ? <Loader2 className="animate-spin size-5"/> : "Connect"}
                 </button>

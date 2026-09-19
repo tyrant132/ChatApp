@@ -59,27 +59,35 @@ const MessageInput: React.FC = () => {
         }, 500)
     }
 
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleSendMessage();
+        }
+    }
 
-    return <div className="p-4 border border-gray-200 bg-white">
-        <div className="flex items-center">
+    return <div className="p-4 border-t border-paper-line bg-paper">
+        <div className="flex items-end gap-3">
             <div className="flex-1">
-                <textarea 
-                    placeholder="Type a message..."
-                    className="w-full text-sm bg-gray-100 rounded-full py-3 px-4 focus:outline-none focus:ring-2 focus:ring-sky-500 resize-none"
+                <textarea
+                    placeholder="Write a message"
+                    rows={1}
+                    className="w-full text-sm bg-white border border-paper-line rounded-xl py-3 px-4 focus:outline-none focus:border-teal/60 resize-none text-ink placeholder-ink/35"
                     value={message}
                     onChange={(e) => handleOnChange(e)}
+                    onKeyDown={handleKeyDown}
                 />
             </div>
 
-            <div className="ml-3">
-                <button
-                    onClick={handleSendMessage}
-                    type="button"
-                    className="bg-sky-500 text-white rounded-full size-10 flex items-center justify-center hover:bg-sky-600 cursor-pointer"
-                >
-                    <Send className="size-[16px]"/>
-                </button>
-            </div>
+            <button
+                onClick={handleSendMessage}
+                type="button"
+                disabled={message.trim() === ''}
+                className="bg-teal text-paper rounded-lg size-11 flex items-center justify-center hover:bg-teal-dark disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors shrink-0"
+                aria-label="Send message"
+            >
+                <Send className="size-[16px]"/>
+            </button>
         </div>
     </div>
 }

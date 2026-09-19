@@ -36,8 +36,8 @@ const ConversationItem: React.FC<Conversation> = ({
 
     return <div
         className={`
-            p-4 border-b border-gray-200 flex items-center space-x-3 cursor-pointer transition-colors
-            ${isSelected ? 'bg-blue-100' : 'bg-gray-50'}    
+            mx-3 my-0.5 px-3 py-3 rounded-lg flex items-center space-x-3 cursor-pointer transition-colors border-l-2
+            ${isSelected ? 'bg-white/[0.06] border-teal' : 'border-transparent hover:bg-white/[0.04]'}
         `}
         onClick={() => {
             if (isSelected) {
@@ -47,38 +47,38 @@ const ConversationItem: React.FC<Conversation> = ({
             }
         }}
     >
-        <div className="relative">
-            <img 
+        <div className="relative shrink-0">
+            <img
                 src="https://avatar.iran.liara.run/public"
                 alt="User"
-                className="size-10 rounded-full object-cover"
+                className="size-10 rounded-full object-cover ring-1 ring-white/10"
             />
             <div
              className={`
-                absolute bottom-0 right-0 size-3 rounded-full border-2 border-white
-                ${friend.online ? "bg-green-400" : "bg-gray-400"}    
+                absolute bottom-0 right-0 size-2.5 rounded-full border-2 border-ink
+                ${friend.online ? "bg-teal" : "bg-paper/25"}
             `}
             ></div>
         </div>
 
         <div className="flex-1 min-w-0">
             <div className="flex justify-between items-center">
-                <h2 className="font-semibold truncate text-sm">{friend.username}</h2>
+                <h2 className="font-medium truncate text-sm text-paper">{friend.username}</h2>
                 {lastMessage?.timestamp && (
-                    <span className="text-xs text-gray-500">{displayTime}</span>
+                    <span className="text-xs text-paper/35">{displayTime}</span>
                 )}
             </div>
 
             <div className="flex items-center">
                 <p
                     className={
-                        unreadMessages() ? 'text-sm text-gray-500 truncate min-h-[20px]' : 'text-sm text-sky-500 truncate min-h-[20px]'    
+                        unreadMessages() ? 'text-sm text-paper/45 truncate min-h-[20px]' : 'text-sm text-paper/70 truncate min-h-[20px]'
                     }
                 >
                     {lastMessage?.content ?? ''}
                 </p>
                 {user && unreadCounts[user.id] > 0 && (
-                    <div className="bg-sky-500 ml-2 text-xs text-white rounded-full size-5 flex items-center justify-center flex-shrink-0">
+                    <div className="bg-gold ml-2 text-[11px] font-medium text-ink rounded-full size-5 flex items-center justify-center flex-shrink-0">
                         {unreadCounts[user.id]}
                     </div>
                 )}

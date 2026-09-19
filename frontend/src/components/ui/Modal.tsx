@@ -26,30 +26,28 @@ const Modal: React.FC<ModalProps> = ({
     };
 
     return <>
-        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
+        <div className="fixed inset-0 bg-ink/60 flex justify-center items-center z-50 p-4">
             <div
                  className={`
-                    bg-white rounded-2xl shadow-lg w-full ${sizeClass[size]} p-6    
+                    bg-paper rounded-2xl shadow-xl w-full ${sizeClass[size]} p-6
                 `}
             >
-                {/* Headeer */}
                 <div className="flex justify-between items-center mb-4">
-                    {title && <h2 className="text-xl text-black font-semibold">{title}</h2>}
+                    {title && <h2 className="font-display text-xl text-ink">{title}</h2>}
                     <button
                         type="button"
                         onClick={onClose}
-                        className="text-gray-500 hover:text-gray-700 text-lg font-bold cursor-pointer"
+                        className="text-ink/40 hover:text-ink cursor-pointer"
+                        aria-label="Close"
                     >
-                        <X />
+                        <X className="size-5" />
                     </button>
                 </div>
 
-                {/* Body */}
                 <div className="mb-4">
                     {children}
                 </div>
 
-                {/* Footer */}
                 {footer && <div className="mt-4">{footer}</div>}
             </div>
         </div>

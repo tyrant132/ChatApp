@@ -5,7 +5,7 @@ import SearchBar from "./SearchBar";
 import UserProfile from "./UserProfile";
 
 const Sidebar: React.FC = () => {
-    return <div className="min-h-screen bg-white border-r border-gray-200 flex flex-col justify-betwen">
+    return <div className="min-h-screen bg-ink flex flex-col justify-between">
         <Header />
         <ConversationsProvider>
             <SearchBar />
