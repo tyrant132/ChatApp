@@ -3,6 +3,7 @@ import { leaveAllRooms } from "./socket/helpers.js";
 import { 
     conversationMarkAsRead, 
     conversationRequest, 
+    conversationRequestRespond,
     conversationSendMessage, 
     conversationTyping, 
     notifyConversationOnlineStatus 
@@ -20,6 +21,8 @@ export const initializeSocket = async (io) => {
             await notifyConversationOnlineStatus(io, socket, true);
 
             socket.on("conversation:request", (data) => conversationRequest(io, socket, data))
+
+            socket.on("conversation:request:respond", (data) => conversationRequestRespond(io, socket, data))
 
             socket.on("conversation:mark-as-read", (data) => conversationMarkAsRead(io, socket, data));
 

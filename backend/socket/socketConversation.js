@@ -13,6 +13,7 @@ export const notifyConversationOnlineStatus = async (io, socket, online) => {
         const user = socket.user;
 
         const friendships = await Friendship.find({
+            status: "accepted",
             $or: [
                 {requester: userId},
                 {recipient: userId}
@@ -65,42 +66,120 @@ export const conversationRequest = async (io, socket, data) => {
             ],
         })
         if (existingFriendship) {
-            socket.emit("conversation:request:error", {error: "Friendship already exists"});
+            const message = existingFriendship.status === "pending"
+                ? "A request with this user is already pending"
+                : "Friendship already exists";
+            socket.emit("conversation:request:error", {error: message});
             return;
         }
 
+        // Requests start pending; the conversation and 'accepted' friendship
+        // are only created once the recipient responds via conversationRequestRespond.
         const friendship = await Friendship.create({
             requester: userId,
             recipient: friend._id,
+            status: "pending",
         })
-        
+
+        // Let the sender know their request went out.
+        socket.emit('conversation:request:sent', {
+            requestId: friendship._id.toString(),
+            friend: {
+                id: friend.id,
+                fullName: friend.fullName,
+                username: friend.username,
+                connectCode: friend.connectCode,
+            }
+        })
+
+        // Notify the recipient in real time, if they're online, so they can accept/decline.
+        io.to(friend._id.toString()).emit('conversation:request:incoming', {
+            requestId: friendship._id.toString(),
+            requester: {
+                id: user.id,
+                fullName: user.fullName,
+                username: user.username,
+                connectCode: user.connectCode,
+            }
+        })
+
+    } catch (error) {
+        console.error("Error conversation:request", error);
+        socket.emit("conversation:request:error", {error: "Error conversation:request"})
+    }
+}
+
+export const conversationRequestRespond = async (io, socket, data) => {
+    try {
+        const userId = socket.userId;
+        const user = socket.user;
+        const { requestId, accept } = data;
+
+        const friendship = await Friendship.findById(requestId);
+        if (!friendship) {
+            socket.emit("conversation:request:respond:error", {error: "Request not found"});
+            return;
+        }
+
+        if (friendship.recipient.toString() !== userId.toString()) {
+            socket.emit("conversation:request:respond:error", {error: "Not authorized to respond to this request"});
+            return;
+        }
+
+        if (friendship.status !== "pending") {
+            socket.emit("conversation:request:respond:error", {error: "This request has already been handled"});
+            return;
+        }
+
+        const requester = await User.findById(friendship.requester);
+        if (!requester) {
+            socket.emit("conversation:request:respond:error", {error: "Requesting user no longer exists"});
+            return;
+        }
+
+        if (!accept) {
+            await friendship.deleteOne();
+
+            socket.emit('conversation:request:responded', { requestId });
+            io.to(requester._id.toString()).emit('conversation:request:declined', {
+                requestId,
+                username: user.username,
+            })
+            return;
+        }
+
+        friendship.status = "accepted";
+        await friendship.save();
+
         const conversation = await Conversation.create({
-            participants: [userId, friend._id.toString()]
+            participants: [userId, requester._id.toString()]
         });
 
-        socket.join(getChatRoom(userId, friend._id.toString()));
+        socket.join(getChatRoom(userId, requester._id.toString()));
 
         const conversationData = {
             conversationId: conversation._id.toString(),
             lastMessage: null,
             unreadCounts: {
                 [userId.toString()]: 0,
-                [friend._id.toString()]: 0,
+                [requester._id.toString()]: 0,
             },
         };
+
+        socket.emit('conversation:request:responded', { requestId });
 
         io.to(userId.toString()).emit('conversation:accept', {
             ...conversationData,
             friend: {
-                id: friend.id,
-                fullName: friend.fullName,
-                username: friend.username,
-                connectCode: friend.connectCode,
-                online: await RedisService.isUserOnline(friend._id.toString()),
+                id: requester.id,
+                fullName: requester.fullName,
+                username: requester.username,
+                connectCode: requester.connectCode,
+                online: await RedisService.isUserOnline(requester._id.toString()),
             }
         })
 
-        io.to(friend._id.toString()).emit('conversation:accept', {
+        io.to(requester._id.toString()).emit('conversation:accept', {
             ...conversationData,
             friend: {
                 id: user.id,
@@ -112,8 +191,8 @@ export const conversationRequest = async (io, socket, data) => {
         })
 
     } catch (error) {
-        console.error("Error conversation:request", error);
-        socket.emit("conversation:request:error", {error: "Error conversation:request"})
+        console.error("Error conversation:request:respond", error);
+        socket.emit("conversation:request:respond:error", {error: "Error conversation:request:respond"})
     }
 }
 
@@ -123,6 +202,7 @@ export const conversationMarkAsRead = async (io, socket, data) => {
         const userId = socket.userId;
 
         const friendship = await Friendship.findOne({
+            status: "accepted",
             $or: [
                 {requester: userId, recipient: friendId},
                 {requester: friendId, recipient: userId}
@@ -164,7 +244,8 @@ export const conversationSendMessage = async (io, socket, data) => {
         const userId = socket.userId;
         const user = socket.user;
 
-                const friendship = await Friendship.findOne({
+        const friendship = await Friendship.findOne({
+            status: "accepted",
             $or: [
                 {requester: userId, recipient: friendId},
                 {requester: friendId, recipient: userId}

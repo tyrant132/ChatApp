@@ -41,8 +41,9 @@ class ConversationController {
         try {
             const userId = req.user._id;
 
-            // get friendships for this user
+            // get accepted friendships for this user (pending requests are not conversations yet)
             const friendships = await Friendship.find({
+                status: "accepted",
                 $or: [
                     {requester: userId},
                     {recipient: userId},
@@ -109,6 +110,46 @@ class ConversationController {
 
         } catch (error) {
             console.error("Error fetching conversations", error);
+            res.status(500).json({message: 'Internal server error'})
+        }
+    }
+
+    static async getFriendRequests(req, res) {
+        try {
+            const userId = req.user._id;
+
+            const [incoming, outgoing] = await Promise.all([
+                Friendship.find({recipient: userId, status: "pending"})
+                    .populate('requester', 'id fullName username connectCode')
+                    .lean(),
+                Friendship.find({requester: userId, status: "pending"})
+                    .populate('recipient', 'id fullName username connectCode')
+                    .lean(),
+            ]);
+
+            res.json({
+                incoming: incoming.map((friendship) => ({
+                    requestId: friendship._id.toString(),
+                    user: {
+                        id: friendship.requester._id.toString(),
+                        fullName: friendship.requester.fullName,
+                        username: friendship.requester.username,
+                        connectCode: friendship.requester.connectCode,
+                    },
+                })),
+                outgoing: outgoing.map((friendship) => ({
+                    requestId: friendship._id.toString(),
+                    user: {
+                        id: friendship.recipient._id.toString(),
+                        fullName: friendship.recipient.fullName,
+                        username: friendship.recipient.username,
+                        connectCode: friendship.recipient.connectCode,
+                    },
+                })),
+            });
+
+        } catch (error) {
+            console.error("Error fetching friend requests", error);
             res.status(500).json({message: 'Internal server error'})
         }
     }

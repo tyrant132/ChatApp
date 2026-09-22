@@ -12,5 +12,9 @@ export const conversationService = {
             }
         })
         return response.data;
+    },
+    fetchFriendRequests: async () => {
+        const response = await apiClient.get("/conversations/requests");
+        return response.data;
     }
 }
