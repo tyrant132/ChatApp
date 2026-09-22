@@ -1,5 +1,10 @@
 import apiClient from "../utils/apiClient";
 
+export type MessageReaction = {
+    user: string;
+    emoji: string;
+}
+
 export type Message = {
     _id: string;
     conversation: string;
@@ -10,6 +15,7 @@ export type Message = {
     content: string;
     read: boolean;
     createdAt: string;
+    reactions?: MessageReaction[];
 }
 
 interface MessagesResponse {

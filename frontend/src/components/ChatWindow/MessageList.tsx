@@ -74,7 +74,7 @@ const MessageList: React.FC = () => {
 
         {allMessages.map((message) => (
             <div key={message._id}>
-                <MessageItem {...message}/>
+                <MessageItem {...message} conversationId={selectedConversation?.conversationId ?? ''}/>
             </div>
         ))}
 

@@ -309,6 +309,57 @@ export const conversationSendMessage = async (io, socket, data) => {
     }
 }
 
+export const conversationReactToMessage = async (io, socket, data) => {
+    try {
+        const { conversationId, messageId, emoji } = data;
+        const userId = socket.userId;
+
+        const conversation = await Conversation.findById(conversationId);
+        if (!conversation || !conversation.participants.some(p => p.toString() === userId.toString())) {
+            socket.emit("conversation:react-to-message:error", {error: "Not authorized for this conversation"});
+            return;
+        }
+
+        const message = await Message.findById(messageId);
+        if (!message || message.conversation.toString() !== conversationId) {
+            socket.emit("conversation:react-to-message:error", {error: "Message not found"});
+            return;
+        }
+
+        const existingIndex = message.reactions.findIndex(
+            (reaction) => reaction.user.toString() === userId.toString()
+        );
+
+        if (existingIndex !== -1 && message.reactions[existingIndex].emoji === emoji) {
+            // Same emoji tapped again -> remove (un-react)
+            message.reactions.splice(existingIndex, 1);
+        } else if (existingIndex !== -1) {
+            // Different emoji -> replace this user's reaction (one reaction per user per message)
+            message.reactions[existingIndex].emoji = emoji;
+        } else {
+            message.reactions.push({ user: userId, emoji });
+        }
+
+        await message.save();
+
+        const friendId = conversation.participants.find(p => p.toString() !== userId.toString());
+        const room = getChatRoom(userId.toString(), friendId.toString());
+
+        io.to(room).emit("conversation:message-reaction", {
+            conversationId,
+            messageId,
+            reactions: message.reactions.map((reaction) => ({
+                user: reaction.user.toString(),
+                emoji: reaction.emoji,
+            })),
+        });
+
+    } catch (error) {
+        console.error("Error reacting to message", error);
+        socket.emit("conversation:react-to-message:error", {error: "Error: conversation:react-to-message:error"})
+    }
+}
+
 export const conversationTyping = async (io, socket, data) => {
     try {
         const {friendId, isTyping} = data;

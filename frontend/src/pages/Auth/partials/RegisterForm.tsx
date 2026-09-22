@@ -1,5 +1,4 @@
 import { z } from "zod"
-
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
@@ -41,7 +40,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitch }) => {
             onSwitch();
             toast.success("Account created! You can now sign in!")
         },
-        onError: (error) => {
+        onError: (error:any) => {
             const msg = error.response?.data?.message || "Registration failed"
             toast.error(msg)
         },
