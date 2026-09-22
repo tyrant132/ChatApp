@@ -5,6 +5,7 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import http from "http"
+import path from "path"
 
 import { Server } from "socket.io"
 
@@ -13,6 +14,7 @@ import { connectDB } from "./utils/db.js";
 import authRoutes from "./routes/authRoutes.js"
 import conversationRoutes from "./routes/conversationRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js"
+import uploadRoutes from "./routes/uploadRoutes.js"
 
 import { initializeSocket } from "./socket.js";
 import { socketAuthMiddleware } from "./socket/socketAuthMiddleware.js";
@@ -23,7 +25,7 @@ const app = express();
 const httpServer = http.createServer(app);
 
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: process.env.CLIENT_ORIGIN,
     credentials: true,
 }))
 app.use(cookieParser())
@@ -34,6 +36,10 @@ app.use(express.json())
 app.use('/api/auth', authRoutes);
 app.use('/api/conversations', conversationRoutes);
 app.use('/api/conversations', messageRoutes);
+app.use('/api/upload', uploadRoutes);
+
+// serve uploaded attachments (images/audio)
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 const io = new Server(httpServer, {
     cors: {

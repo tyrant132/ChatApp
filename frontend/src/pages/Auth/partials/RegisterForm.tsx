@@ -60,7 +60,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitch }) => {
                     <input
                         {...register('fullName')}
                         className="text-sm w-full pl-10 pr-3 py-3 bg-white border border-paper-line rounded-lg focus:outline-none focus:ring-2 focus:ring-teal/30 focus:border-teal text-ink"
-                        placeholder="John Doe"
+                        placeholder="Enter your name"
                     />
                 </div>
                 {errors.fullName && <p className="text-red-500 text-sm mt-1">{errors.fullName.message}</p>}
@@ -73,7 +73,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitch }) => {
                     <input
                         {...register('username')}
                         className="text-sm w-full pl-10 pr-3 py-3 bg-white border border-paper-line rounded-lg focus:outline-none focus:ring-2 focus:ring-teal/30 focus:border-teal text-ink"
-                        placeholder="johndoe"
+                        placeholder="Enter your username"
                     />
                 </div>
                 {errors.username && <p className="text-red-500 text-sm mt-1">{errors.username.message}</p>}
@@ -87,7 +87,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitch }) => {
                         {...register('email')}
                         type="email"
                         className="text-sm w-full pl-10 pr-3 py-3 bg-white border border-paper-line rounded-lg focus:outline-none focus:ring-2 focus:ring-teal/30 focus:border-teal text-ink"
-                        placeholder="you@example.com"
+                        placeholder="username@example.com"
                     />
                 </div>
                 {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}

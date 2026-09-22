@@ -240,9 +240,17 @@ export const conversationMarkAsRead = async (io, socket, data) => {
 
 export const conversationSendMessage = async (io, socket, data) => {
     try {
-        const { conversationId, friendId, content } = data;
+        const { conversationId, friendId, content, attachment } = data;
         const userId = socket.userId;
         const user = socket.user;
+
+        const hasContent = typeof content === "string" && content.trim() !== "";
+        const hasAttachment = attachment && attachment.url && ["image", "audio"].includes(attachment.type);
+
+        if (!hasContent && !hasAttachment) {
+            socket.emit("conversation:send-message:error", {error: "Message cannot be empty"})
+            return;
+        }
 
         const friendship = await Friendship.findOne({
             status: "accepted",
@@ -266,7 +274,13 @@ export const conversationSendMessage = async (io, socket, data) => {
         const message = new Message({
             conversation: conversation.id,
             sender: userId,
-            content,
+            content: hasContent ? content.trim() : undefined,
+            attachment: hasAttachment ? {
+                url: attachment.url,
+                type: attachment.type,
+                mimeType: attachment.mimeType,
+                size: attachment.size,
+            } : undefined,
         })
         await message.save();
 
@@ -280,7 +294,8 @@ export const conversationSendMessage = async (io, socket, data) => {
                 _id: userId.toString(),
                 username: user.username,
             },
-            content,
+            content: message.content,
+            attachment: message.attachment?.url ? message.attachment : undefined,
             createdAt: message.createdAt,
             read: message.read,
         }

@@ -3,6 +3,7 @@ import { SmilePlus } from "lucide-react";
 import type { Message } from "../../services/messageService";
 import { useAuthStore } from "../../stores/authStore";
 import { useSocketContext } from "../../contexts/SocketContext";
+import { getAssetUrl } from "../../utils/assetUrl";
 
 const REACTION_EMOJIS = ["👍", "❤️", "😂", "😮", "😢"];
 
@@ -17,6 +18,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
     read,
     createdAt,
     reactions = [],
+    attachment,
     conversationId,
 }) => {
     const { user } = useAuthStore();
@@ -91,6 +93,20 @@ const MessageItem: React.FC<MessageItemProps> = ({
         </div>
     );
 
+    const AttachmentBlock = attachment && (
+        attachment.type === "image" ? (
+            <a href={getAssetUrl(attachment.url)} target="_blank" rel="noopener noreferrer">
+                <img
+                    src={getAssetUrl(attachment.url)}
+                    alt="Attachment"
+                    className="rounded-xl max-w-[240px] max-h-[320px] object-cover block"
+                />
+            </a>
+        ) : (
+            <audio controls src={getAssetUrl(attachment.url)} className="max-w-[240px]" />
+        )
+    );
+
     if (userIsSender) {
         return <div className="flex flex-col items-end mb-3 group">
             <div className="relative flex items-center gap-1.5">
@@ -105,7 +121,8 @@ const MessageItem: React.FC<MessageItemProps> = ({
                 </button>
                 {pickerOpen && ReactionPicker}
                 <div className="bg-ink text-paper p-3 max-w-xs lg:max-w-md rounded-2xl rounded-br-md">
-                    <p className="text-sm leading-relaxed">{content}</p>
+                    {attachment && <div className="mb-1.5">{AttachmentBlock}</div>}
+                    {content && <p className="text-sm leading-relaxed">{content}</p>}
                     <span className="text-[11px] text-paper/40 mt-1 block">{displayTime}</span>
                 </div>
             </div>
@@ -121,7 +138,8 @@ const MessageItem: React.FC<MessageItemProps> = ({
                 className="size-8 rounded-full object-cover mr-1 ring-1 ring-ink/10 self-end"
             />
             <div className="bg-white border border-paper-line p-3 max-w-xs lg:max-w-md rounded-2xl rounded-bl-md">
-                <p className="text-sm text-ink leading-relaxed">{content}</p>
+                {attachment && <div className="mb-1.5">{AttachmentBlock}</div>}
+                {content && <p className="text-sm text-ink leading-relaxed">{content}</p>}
                 <span className="text-[11px] text-ink/35 mt-1 block">{displayTime}</span>
             </div>
             <button

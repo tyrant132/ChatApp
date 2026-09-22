@@ -15,8 +15,17 @@ const messageSchema = new mongoose.Schema({
     },
     content: {
         type: String,
-        required: true,
         trim: true,
+        // Not required when the message is a standalone image/audio attachment.
+        required: function () {
+            return !this.attachment || !this.attachment.url;
+        },
+    },
+    attachment: {
+        url: { type: String },
+        type: { type: String, enum: ["image", "audio"] },
+        mimeType: { type: String },
+        size: { type: Number },
     },
     read: {
         type: Boolean,
@@ -46,8 +55,13 @@ messageSchema.post("save", async function (doc) {
     try {
         const Conversation = mongoose.model("Conversation");
 
+        let previewContent = doc.content;
+        if (!previewContent && doc.attachment?.url) {
+            previewContent = doc.attachment.type === "image" ? "📷 Photo" : "🎤 Voice message";
+        }
+
         const preview = {
-            content: doc.content,
+            content: previewContent,
             timestamp: doc.createdAt,
         }
 

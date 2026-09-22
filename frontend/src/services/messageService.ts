@@ -5,6 +5,13 @@ export type MessageReaction = {
     emoji: string;
 }
 
+export type MessageAttachment = {
+    url: string;
+    type: "image" | "audio";
+    mimeType: string;
+    size: number;
+}
+
 export type Message = {
     _id: string;
     conversation: string;
@@ -16,6 +23,7 @@ export type Message = {
     read: boolean;
     createdAt: string;
     reactions?: MessageReaction[];
+    attachment?: MessageAttachment;
 }
 
 interface MessagesResponse {
